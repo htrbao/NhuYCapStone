@@ -2,8 +2,16 @@ from source import Chromosome, Population
 
 edd = Chromosome("EDD", "data")
 spt = Chromosome("SPT", "data")
-random = Chromosome()
+lpt = Chromosome("LPT", "data")
+fcfs = Chromosome("FCFS", "data")
+random1 = Chromosome()
+random2= Chromosome()
+random3= Chromosome()
+random4= Chromosome()
+random5= Chromosome()
+random6= Chromosome()
 
-print(edd)
-print(spt)
-print(random)
+initial_population = Population()
+initial_population.create_initial_population()
+for nst in initial_population.population:
+    print(nst)
