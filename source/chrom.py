@@ -108,4 +108,7 @@ class Chromosome():
     
 
     def __repr__(self) -> str:
-        return f"""Name: {self.type};\nGene: {self.gene if self.gene is not None else self.data}"""
+        gene = ""
+        for i in range(len(self.gene)):
+            gene += str(self.gene[i]) + ("  -|-  " if i == 19 else " ")
+        return f"""Name: {self.type};\nGene: {gene}"""
