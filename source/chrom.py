@@ -12,17 +12,22 @@ class Chromosome():
         "SPT": "P trải",
         "Genetic": "",
     }
-    def __init__(self, type:str = "random"):
+    def __init__(self, type:str = "random", data_path:str = "data"):
         self.type = type
+        self.data_path = data_path
+
+        self.gene = None
         self.data = None
-        if self.chrom_types[self.type] != "":
+        if self.chrom_types[self.type] != "Genetic":
             self.create_chrom()
 
-    def encode_chrom(self):
-        pass
 
-    def create_chrom(self, data_path:str = "../data"):
-        data = pd.read_excel(os.path.join(data_path, 'Data.xlsx'), sheet_name=0, index_col=0)
+    def __len__(self):
+        return len(self.data.index) * 2
+
+
+    def create_chrom(self) -> pd.DataFrame:
+        data = pd.read_excel(os.path.join(self.data_path, 'Data.xlsx'), sheet_name=0, index_col=0)
         data = data.reset_index()
         data['Start time 1'] = 0
         data['Finish time 1'] = 0
@@ -36,7 +41,7 @@ class Chromosome():
         if self.type == "random":
             sorted_jobs = data.sample(frac=1).values
         else:
-            sorted_jobs = data.sort_values(by=self.self.types[self.type], ascending=True if self.type != "LPT" else False).values
+            sorted_jobs = data.sort_values(by=self.chrom_types[self.type], ascending=True if self.type != "LPT" else False).values
 
         # Khởi tạo hàng đợi ưu tiên (min heap) để theo dõi thời gian hoàn thành trên từng máy
         machines_heap = [(0, machine_id) for machine_id in range(8)]
@@ -69,25 +74,38 @@ class Chromosome():
             data.at[ind, 'Độ trễ (phút)'] = max(0, data.at[ind, 'Finish time 2'] - (data.at[ind, 'Due date (h)'] * 60))
             cur_cutting_time[cutting_idx] = data.at[ind, 'Finish time 2']
 
-        self.data = data
+        self.data:pd.DataFrame = data
 
+
+    def encode_chrom(self) -> list[int]:
+        self.gene:list[int] = self.data["Jobs"].to_list()
+        self.gene.extend(self.data.sort_values(by="Start time 2")["Jobs"].to_list())
+        print(self.gene)
+
+    
     def crossover(self, another:Self) -> tuple[Self, Self]:
-        # crossover_point = random.randint(0, len(parent1) - 20)
+        crossover_point = random.randint(0, len(another) - 20)
 
-        # child1 = Chromosome()
-        # child2:Self = parent2.copy()
+        child1 = Chromosome("Genetic")
+        child2 = Chromosome("Genetic")
 
         # # Áp dụng POX
         # child1[:crossover_point] = parent2[:crossover_point]
         # child2[:crossover_point] = parent1[:crossover_point]
-        pass
+        return child1, child2
 
-    def objective(self):
+    
+    def objective(self) -> float:
         column_count = 'Độ trễ (phút)'
         num_tardiness = (self.data[column_count] > 0).sum()
         sum_tardiness = self.data['Độ trễ (phút)'].sum()
         return sum_tardiness
-    # Hàm tính độ thích nghi của mỗi NST
-    def fitness(self, max_objective):
+    
+
+    def fitness(self, max_objective) -> float:
         sum_tardiness = self.data['Độ trễ (phút)'].sum()
         return max_objective - sum_tardiness
+    
+
+    def __repr__(self) -> str:
+        return f"""Name: {self.type};\nGene: {self.gene if self.gene is not None else self.data}"""
