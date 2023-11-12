@@ -2,7 +2,32 @@ import os
 import heapq
 import random
 import pandas as pd
+import numpy as np
 from typing_extensions import Self
+from copy import deepcopy
+
+
+def POX(gene1: list[int], gene2: list[int], keep_number: int = 2):
+    child = []
+
+    chosen_pos = np.random.randint(len(gene1) // 2, size=keep_number)
+
+    while chosen_pos[0] == chosen_pos[1]:
+        chosen_pos[1] = np.random.randint(len(gene1) // 2)
+    chosen_gen = [gene1[i] for i in chosen_pos]
+    pos = 0
+
+    for i in range(len(gene1) // 2):
+        if i in chosen_pos:
+            child.append(gene1[i])
+        else:
+            while gene2[pos] in chosen_gen:
+                pos += 1
+            child.append(gene2[pos])
+            pos += 1
+
+    return child
+
 
 class Chromosome():
     chrom_types = {
@@ -12,12 +37,12 @@ class Chromosome():
         "SPT": "P trải",
         "Genetic": "",
     }
-    def __init__(self, type:str = "random", data_path:str = "data"):
+    def __init__(self, type:str = "Random", data_path:str = "data"):
         self.type = type
         self.data_path = data_path
 
-        self.gene = None
-        self.data = None
+        self.gene = []
+        self.data = []
         if self.type != "Genetic":
             self.create_chrom()
 
@@ -38,14 +63,19 @@ class Chromosome():
         data['Độ trễ (phút)'] = 0
 
         # Sắp xếp công việc theo thời gian tới hạn (due date) tăng dần
-        if self.type == "random":
+        if self.type == "Random":
             sorted_jobs = data.sample(frac=1).values
+        elif self.type == "Genetic":
+            if len(self.gene) == 0:
+                raise Exception("Gene is required when using Genetic type")
+            
+            job_df = pd.DataFrame(self.gene, columns=["Jobs"])
+            sorted_jobs = pd.merge(job_df, data, on="Jobs", how='left').values
         else:
             sorted_jobs = data.sort_values(by=self.chrom_types[self.type], ascending=True if self.type != "LPT" else False).values
 
         # Khởi tạo hàng đợi ưu tiên (min heap) để theo dõi thời gian hoàn thành trên từng máy
         machines_heap = [(0, machine_id) for machine_id in range(8)]
-
         # Lập lịch công việc
         for job in sorted_jobs:
             processing_time, machine_id = heapq.heappop(machines_heap)
@@ -84,14 +114,17 @@ class Chromosome():
 
     
     def crossover(self, another:Self) -> tuple[Self, Self]:
-        crossover_point = random.randint(0, len(another) - 20)
+        crossover_point = random.randint(0, len(another) // 2)
 
         child1 = Chromosome("Genetic")
         child2 = Chromosome("Genetic")
 
-        # # Áp dụng POX
-        # child1[:crossover_point] = parent2[:crossover_point]
-        # child2[:crossover_point] = parent1[:crossover_point]
+        child1.gene = POX(self.gene, another.gene)
+        child2.gene = POX(another.gene, self.gene)
+
+        child1.create_chrom()
+        child2.create_chrom()
+
         return child1, child2
 
     
@@ -103,9 +136,12 @@ class Chromosome():
     
 
     def fitness(self, max_objective) -> float:
-        sum_tardiness = self.data['Độ trễ (phút)'].sum()
-        return max_objective - sum_tardiness
-    
+        return max_objective - self.objective()
+
+
+    def mutation(self) -> None:
+        mutation_point_1 = random.randint(1, len(self.gene) // 2)
+        mutation_point_2 = random.randint(0, mutation_point_1)
 
     def __repr__(self) -> str:
         gene = ""
