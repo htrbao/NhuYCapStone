@@ -81,7 +81,6 @@ class Chromosome():
     def encode_chrom(self) -> list[int]:
         self.gene:list[int] = self.data["Jobs"].to_list()
         self.gene.extend(self.data.sort_values(by="Start time 2")["Jobs"].to_list())
-        print(self.gene)
 
     
     def crossover(self, another:Self) -> tuple[Self, Self]:
