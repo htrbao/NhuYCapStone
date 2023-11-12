@@ -18,7 +18,7 @@ class Chromosome():
 
         self.gene = None
         self.data = None
-        if self.chrom_types[self.type] != "Genetic":
+        if self.type != "Genetic":
             self.create_chrom()
 
 
@@ -75,6 +75,7 @@ class Chromosome():
             cur_cutting_time[cutting_idx] = data.at[ind, 'Finish time 2']
 
         self.data:pd.DataFrame = data
+        self.encode_chrom()
 
 
     def encode_chrom(self) -> list[int]:
