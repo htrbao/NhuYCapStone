@@ -11,6 +11,8 @@ class Population():
         self.population_size = population_size
         self.population: list[Chromosome] = []
         self.generation = 0
+        self.consecutive_same_objective_count = 0
+        self.max_consecutive_same_objective = 10 
         
     
     def create_initial_population(self, ):
@@ -47,3 +49,29 @@ class Population():
         nst_remove = np.argmax([nst.objective() for nst in self.population])
         self.population.pop(nst_remove)
         self.generation += 1
+    
+        # Kiểm tra điều kiện dừng
+        # Lấy tất cả các giá trị hàm mục tiêu của quần thể
+        current_objectives = [chrom.objective() for chrom in self.population]
+
+        # Lấy giá trị hàm mục tiêu nhỏ nhất trong quần thể
+        current_best_objective = min(current_objectives)
+        if self.is_consecutive_same_objective(current_best_objective):
+            self.consecutive_same_objective_count += 1
+        else:
+            self.consecutive_same_objective_count = 0
+
+        if self.consecutive_same_objective_count >= self.max_consecutive_same_objective:
+            print(f"Terminating after {self.max_consecutive_same_objective} consecutive same objectives.")
+            
+            return True
+
+        return False
+
+    def is_consecutive_same_objective(self, current_best_objective):
+        # Check if the current objective is the same as the previous one
+        if hasattr(self, 'previous_objective'):
+            if current_best_objective == self.previous_objective:
+                return True
+        self.previous_objective = current_best_objective
+        return False
