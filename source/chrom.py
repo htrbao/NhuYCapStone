@@ -69,21 +69,27 @@ class Chromosome():
             if len(self.gene) == 0:
                 raise Exception("Gene is required when using Genetic type")
             
+            print("Đây là gene cần tạo data", self.gene)
+
             job_df = pd.DataFrame(self.gene, columns=["Jobs"])
-            sorted_jobs = pd.merge(job_df, data, on="Jobs", how='left').values
+            sorted_jobs = pd.merge(job_df, data, on="Jobs", how='left')
+            print("Thứ tự job dựa trên gene đưa vào:", sorted_jobs["Jobs"])
+
+            sorted_jobs = sorted_jobs.values
         else:
             sorted_jobs = data.sort_values(by=self.chrom_types[self.type], ascending=True if self.type != "LPT" else False).values
 
         # Khởi tạo hàng đợi ưu tiên (min heap) để theo dõi thời gian hoàn thành trên từng máy
         machines_heap = [(0, machine_id) for machine_id in range(8)]
         # Lập lịch công việc
-        for job in sorted_jobs:
+        for idx, job in enumerate(sorted_jobs):
             processing_time, machine_id = heapq.heappop(machines_heap)
             start_time = max(processing_time, 0)
             finish_time = start_time + job[5]
             data.at[int(job[0]) - 1, 'Start time 1'] = start_time
             data.at[int(job[0]) - 1, 'Finish time 1'] = finish_time
             data.at[int(job[0]) - 1, 'Máy trải'] = machine_id + 1
+            data.at[int(job[0]) - 1, 'Gene Order'] = idx
             heapq.heappush(machines_heap, (finish_time, machine_id))
 
         # Gán việc cho máy cắt
@@ -104,12 +110,14 @@ class Chromosome():
             data.at[ind, 'Độ trễ (phút)'] = max(0, data.at[ind, 'Finish time 2'] - (data.at[ind, 'Due date (h)'] * 60))
             cur_cutting_time[cutting_idx] = data.at[ind, 'Finish time 2']
 
-        self.data:pd.DataFrame = data
+        self.data:pd.DataFrame = data.sort_values(by=['Gene Order'])
         self.encode_chrom()
 
 
     def encode_chrom(self) -> list[int]:
+        #Order of Máy trải
         self.gene:list[int] = self.data["Jobs"].to_list()
+        #Order of Máy cắt
         self.gene.extend(self.data.sort_values(by="Start time 2")["Jobs"].to_list())
 
     
@@ -140,8 +148,18 @@ class Chromosome():
 
 
     def mutation(self) -> None:
+        self.type = "Genetic"
         mutation_point_1 = random.randint(1, len(self.gene) // 2)
-        mutation_point_2 = random.randint(0, mutation_point_1)
+        mutation_point_2 = random.randint(0, mutation_point_1 - 1)
+
+        print(mutation_point_1, mutation_point_2)
+
+        self.gene[mutation_point_1], self.gene[mutation_point_2] = self.gene[mutation_point_2], self.gene[mutation_point_1]
+        self.gene = self.gene[:len(self.gene) // 2]
+
+        print(self.gene)
+
+        self.create_chrom()
 
     def __repr__(self) -> str:
         gene = ""

@@ -1,4 +1,5 @@
 import os
+import random
 import heapq
 import pandas as pd
 import numpy as np
@@ -7,14 +8,17 @@ from typing_extensions import Self
 from .chrom import Chromosome
 
 class Population():
-    def __init__(self, population_size: int = 10, ):
-        self.population_size = population_size
+    def __init__(self):
         self.population: list[Chromosome] = []
         self.generation = 0
         self.consecutive_same_objective_count = 0
         self.max_consecutive_same_objective = 10 
         
-    
+    @property
+    def population_size(self):
+        return len(self.population)
+
+
     def create_initial_population(self, ):
         # Khởi tạo quần thể
         self.population.extend([Chromosome("EDD"), Chromosome("FCFS"), Chromosome("SPT"), Chromosome("LPT")])
@@ -61,12 +65,10 @@ class Population():
         else:
             self.consecutive_same_objective_count = 0
 
-        if self.consecutive_same_objective_count >= self.max_consecutive_same_objective:
-            print(f"Terminating after {self.max_consecutive_same_objective} consecutive same objectives.")
-            
-            return True
+        
+    def is_need_to_terminate(self):
+        return self.consecutive_same_objective_count >= self.max_consecutive_same_objective
 
-        return False
 
     def is_consecutive_same_objective(self, current_best_objective):
         # Check if the current objective is the same as the previous one
@@ -75,3 +77,39 @@ class Population():
                 return True
         self.previous_objective = current_best_objective
         return False
+
+
+    def roulette_wheel_selection(self) -> list[Chromosome]:
+        max_objective = max([chrom.objective() for chrom in self.population])
+        
+        fitness_values = [chrom.fitness(max_objective) for chrom in self.population]
+        
+        total_fitness = sum(fitness_values)
+        
+        probabilities = [fit / total_fitness for fit in fitness_values]
+        
+        probabilities_prefix:list[float] = []
+        for i in range(len(probabilities)):
+            probabilities_prefix.append(probabilities[i] + (probabilities_prefix[-1] if i != 0 else 0))
+        
+        random_list = [random.random() for _ in range(len(self.population))]
+        elite_population: list[Chromosome]  = [self.population[i] for i in np.searchsorted(probabilities_prefix, random_list, side='right')]
+
+        return elite_population
+    
+
+    def add_chromosome(self, chrom: Chromosome):
+        """
+        Arg:
+            chrom: Chromosome sẽ được thêm vào Quần thể này
+        """
+        self.population.append(chrom)
+
+
+    def remove_chromosome(self, index: int):
+        """
+        Arg:
+            index: Vị trí của Chromosome sẽ bị remove
+        """
+        self.population.pop(index)
+
