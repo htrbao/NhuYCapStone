@@ -1,0 +1,26 @@
+Generation 1, Best Objective: 40.81999999999999
+Generation 2, Best Objective: 40.81999999999999
+Generation 3, Best Objective: 40.81999999999999
+Generation 4, Best Objective: 40.81999999999999
+Generation 5, Best Objective: 32.00999999999999
+Generation 6, Best Objective: 32.00999999999999
+Generation 7, Best Objective: 32.00999999999999
+Generation 8, Best Objective: 32.00999999999999
+Generation 9, Best Objective: 32.00999999999999
+Generation 10, Best Objective: 32.00999999999999
+Generation 11, Best Objective: 32.00999999999999
+Generation 12, Best Objective: 32.00999999999999
+Generation 13, Best Objective: 30.539999999999992
+Generation 14, Best Objective: 30.539999999999992
+Generation 15, Best Objective: 23.870000000000005
+Generation 16, Best Objective: 23.870000000000005
+Generation 17, Best Objective: 23.870000000000005
+Generation 18, Best Objective: 23.870000000000005
+Generation 19, Best Objective: 23.870000000000005
+Generation 20, Best Objective: 23.870000000000005
+Generation 21, Best Objective: 23.870000000000005
+Generation 22, Best Objective: 23.870000000000005
+Generation 23, Best Objective: 23.870000000000005
+Generation 24, Best Objective: 23.870000000000005
+Name: Genetic;
+Gene: 5 11 20 4 2 7 10 16 14 9 12 6 3 18 1 17 19 13 15 8  -|-  11 16 4 2 5 9 20 7 14 10 18 12 6 15 17 1 3 19 13 8 

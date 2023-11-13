@@ -8,7 +8,8 @@ from typing_extensions import Self
 from .chrom import Chromosome
 
 class Population():
-    def __init__(self):
+    def __init__(self, max_size: int = 100):
+        self.max_size = max_size
         self.population: list[Chromosome] = []
         self.generation = 0
         self.consecutive_same_objective_count = 0
@@ -23,7 +24,7 @@ class Population():
         # Khởi tạo quần thể
         self.population.extend([Chromosome("EDD"), Chromosome("FCFS"), Chromosome("SPT"), Chromosome("LPT")])
         # Thêm 6 NST tạo ngẫu nhiên
-        for _ in range(6):
+        for _ in range(self.max_size - self.population_size):
             self.population.append(Chromosome())
         
         return self.population
@@ -47,11 +48,12 @@ class Population():
         # Thêm các NST con vào quần thể nếu hàm mục tiêu của NST con tốt hơn NST thứ k trong population 
         for i, nst_index in enumerate(sorted_offspring_indices):
             if offspring.population[nst_index].objective() < kth_population_objective:
-                self.population[k - 1] = offspring.population[nst_index]
-                break
+                self.add_chromosome(offspring.population[nst_index])
+
         #Loại bỏ các NST có hàm mục tiêu xấu nhất
-        nst_remove = np.argmax([nst.objective() for nst in self.population])
-        self.population.pop(nst_remove)
+        while(self.population_size >= self.max_size):
+            nst_remove = np.argmax([nst.objective() for nst in self.population])
+            self.remove_chromosome(nst_remove)
         self.generation += 1
     
         # Kiểm tra điều kiện dừng

@@ -2,8 +2,8 @@ import random
 from source import Chromosome, Population
 
 # Hàm chạy thuật toán di truyền
-def genetic_algorithm(num_generations = 100, population_size = 10, crossover_probability = 0.8, mutation_probability = 0.2):
-    population = Population()
+def genetic_algorithm(num_generations = 100, population_size = 15, crossover_probability = 0.8, mutation_probability = 0.2):
+    population = Population(population_size)
     population.create_initial_population()
     for generation in range(num_generations):
         elite_list = population.roulette_wheel_selection()
@@ -18,12 +18,15 @@ def genetic_algorithm(num_generations = 100, population_size = 10, crossover_pro
                 chrom.mutation()
                 offspring.add_chromosome(chrom)
         population.acceptance_threshold_replacement(offspring)
-        if population.is_need_to_terminate():
-            break
+        
         best_nst = population.get_best_chrom()
+        if population.is_need_to_terminate():
+            return best_nst
         print(f"Generation {generation + 1}, Best Objective: {best_nst.objective()}")
+        
 # Gọi hàm chạy thuật toán di truyền
-genetic_algorithm()
+solution = genetic_algorithm()
+print(solution)
 
             
 
