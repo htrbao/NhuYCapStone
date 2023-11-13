@@ -47,7 +47,7 @@ class Population():
         # Thêm các NST con vào quần thể nếu hàm mục tiêu của NST con tốt hơn NST thứ k trong population 
         for i, nst_index in enumerate(sorted_offspring_indices):
             if offspring.population[nst_index].objective() < kth_population_objective:
-                self.population[k - 1] = offspring[nst_index]
+                self.population[k - 1] = offspring.population[nst_index]
                 break
         #Loại bỏ các NST có hàm mục tiêu xấu nhất
         nst_remove = np.argmax([nst.objective() for nst in self.population])
@@ -112,4 +112,9 @@ class Population():
             index: Vị trí của Chromosome sẽ bị remove
         """
         self.population.pop(index)
-
+    
+    
+    def get_best_chrom(self):
+        objective_list = [chrom.objective() for chrom in self.population]
+        index = np.argmin(objective_list)
+        return self.population[index]

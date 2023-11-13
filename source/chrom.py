@@ -68,12 +68,9 @@ class Chromosome():
         elif self.type == "Genetic":
             if len(self.gene) == 0:
                 raise Exception("Gene is required when using Genetic type")
-            
-            print("Đây là gene cần tạo data", self.gene)
 
             job_df = pd.DataFrame(self.gene, columns=["Jobs"])
             sorted_jobs = pd.merge(job_df, data, on="Jobs", how='left')
-            print("Thứ tự job dựa trên gene đưa vào:", sorted_jobs["Jobs"])
 
             sorted_jobs = sorted_jobs.values
         else:
@@ -152,12 +149,8 @@ class Chromosome():
         mutation_point_1 = random.randint(1, len(self.gene) // 2)
         mutation_point_2 = random.randint(0, mutation_point_1 - 1)
 
-        print(mutation_point_1, mutation_point_2)
-
         self.gene[mutation_point_1], self.gene[mutation_point_2] = self.gene[mutation_point_2], self.gene[mutation_point_1]
         self.gene = self.gene[:len(self.gene) // 2]
-
-        print(self.gene)
 
         self.create_chrom()
 
