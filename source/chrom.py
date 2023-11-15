@@ -51,7 +51,7 @@ class Chromosome():
         return len(self.data.index) * 2
 
 
-    def create_chrom(self) -> pd.DataFrame:
+    def create_chrom(self) -> None:
         data = pd.read_excel(os.path.join(self.data_path, 'Data.xlsx'), sheet_name=0, index_col=0)
         data = data.reset_index()
         data['Start time 1'] = 0
@@ -107,7 +107,9 @@ class Chromosome():
             data.at[ind, 'Độ trễ (phút)'] = max(0, data.at[ind, 'Finish time 2'] - (data.at[ind, 'Due date (h)'] * 60))
             cur_cutting_time[cutting_idx] = data.at[ind, 'Finish time 2']
 
-        self.data:pd.DataFrame = data.sort_values(by=['Gene Order'])
+        self.data = data
+        if self.type == "Genetic" or self.type == "Random":
+            self.data:pd.DataFrame = data.sort_values(by=['Gene Order'])
         self.encode_chrom()
 
 
