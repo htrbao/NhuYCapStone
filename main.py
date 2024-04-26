@@ -13,7 +13,7 @@ def genetic_algorithm(num_generations = 200, population_size = 300, crossover_pr
                 child1, child2 = parent1.crossover(parent2)
                 offspring.add_chromosome(child1)
                 offspring.add_chromosome(child2)
-        for chrom in elite_list:
+        for chrom in offspring.population:
             if random.random() < mutation_probability:
                 chrom.mutation()
                 offspring.add_chromosome(chrom)

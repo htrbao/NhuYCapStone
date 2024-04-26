@@ -3,9 +3,11 @@ import random
 import heapq
 import pandas as pd
 import numpy as np
+from copy import deepcopy
 # from typing_extensions import Self
 
 from .chrom import Chromosome
+
 
 class Population():
     def __init__(self, max_size: int = 100):
@@ -99,6 +101,17 @@ class Population():
 
         return elite_population
     
+    
+    def tournament_selection(self) -> list[Chromosome]:
+        arr = np.arange(self.population_size)
+        np.random.shuffle(arr)
+
+        elite_population = []
+        for x in arr:
+            elite_population.append(deepcopy(self.population[x]))
+
+        return elite_population
+
 
     def add_chromosome(self, chrom: Chromosome):
         """
