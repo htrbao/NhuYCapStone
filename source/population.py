@@ -13,9 +13,8 @@ class Population():
         self.population: list[Chromosome] = []
         self.generation = 0
         self.consecutive_same_objective_count = 0
-        self.max_consecutive_same_objective = 10 
-        
-    @property
+        self.max_consecutive_same_objective = 20
+    @property    
     def population_size(self):
         return len(self.population)
 

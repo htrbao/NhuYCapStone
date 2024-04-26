@@ -110,8 +110,6 @@ class Chromosome():
         self.data = data
         if self.type == "Genetic" or self.type == "Random":
             self.data:pd.DataFrame = data.sort_values(by=['Gene Order'])
-
-        print(self.data)
         self.encode_chrom()
 
 
@@ -161,5 +159,5 @@ class Chromosome():
     def __repr__(self) -> str:
         gene = ""
         for i in range(len(self.gene)):
-            gene += str(self.gene[i]) + ("  -|-  " if i == 19 else " ")
+            gene += str(self.gene[i]) + ("  -|-  " if i == 24 else " ")
         return f"""Name: {self.type};\nGene: {gene}"""
