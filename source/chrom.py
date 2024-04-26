@@ -140,7 +140,7 @@ class Chromosome():
         self.gene.extend(self.data.sort_values(by="Start time 2")["Jobs"].to_list())
 
     
-    def crossover(self, another, type: str = "PMX"):
+    def crossover(self, another, type: str = "POX"):
         child1 = Chromosome("Genetic")
         child2 = Chromosome("Genetic")
 
