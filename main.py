@@ -2,7 +2,7 @@ import random
 from source import Chromosome, Population
 
 # Hàm chạy thuật toán di truyền
-def genetic_algorithm(num_generations = 50, population_size = 50, crossover_probability = 0.8, mutation_probability = 0.2):
+def genetic_algorithm(num_generations = 200, population_size = 300, crossover_probability = 0.9, mutation_probability = 0.42):
     population = Population(population_size)
     population.create_initial_population()
     for generation in range(num_generations):

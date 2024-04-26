@@ -29,7 +29,7 @@ def POX(gene1: list[int], gene2: list[int], keep_number: int = 2):
 
 
 def PMX(gene1: list[int], gene2: list[int]):
-    px1, px2 = np.random.randint(0, len(gene1) // 2, (2, ))
+    px1, px2 = np.random.randint(0, len(gene1) // 2 // 4, (2, ))
     px1, px2 = (px2, px1) if px1 > px2 else (px1, px2)
     mask = [False] * px1 + [True] * (px2 - px1) + [False] * (len(gene1) - px2)
     child1 = np.where(mask, gene2, gene1)
@@ -140,7 +140,7 @@ class Chromosome():
         self.gene.extend(self.data.sort_values(by="Start time 2")["Jobs"].to_list())
 
     
-    def crossover(self, another, type: str = "POX"):
+    def crossover(self, another, type: str = "PMX"):
         child1 = Chromosome("Genetic")
         child2 = Chromosome("Genetic")
 
@@ -181,5 +181,5 @@ class Chromosome():
     def __repr__(self) -> str:
         gene = ""
         for i in range(len(self.gene)):
-            gene += str(self.gene[i]) + ("  -|-  " if i == 24 else " ")
+            gene += str(self.gene[i]) + ("  -|-  " if i == 49 else " ")
         return f"""Name: {self.type};\nGene: {gene}"""

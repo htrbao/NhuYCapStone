@@ -13,7 +13,7 @@ class Population():
         self.population: list[Chromosome] = []
         self.generation = 0
         self.consecutive_same_objective_count = 0
-        self.max_consecutive_same_objective = 20
+        self.max_consecutive_same_objective = 50
     @property    
     def population_size(self):
         return len(self.population)
@@ -21,7 +21,8 @@ class Population():
 
     def create_initial_population(self, ):
         # Khởi tạo quần thể
-        self.population.extend([Chromosome("EDD"), Chromosome("FCFS"), Chromosome("SPT"), Chromosome("LPT")])
+        for _ in range(int(0.2 * self.population_size // 4)):
+            self.population.extend([Chromosome("EDD"), Chromosome("FCFS"), Chromosome("SPT"), Chromosome("LPT")])
         # Thêm 6 NST tạo ngẫu nhiên
         for _ in range(self.max_size - self.population_size):
             self.population.append(Chromosome())
