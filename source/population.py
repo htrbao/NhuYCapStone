@@ -21,10 +21,10 @@ class Population():
 
     def create_initial_population(self, ):
         # Khởi tạo quần thể
-        for _ in range(int(0.2 * self.population_size // 4)):
+        for _ in range(int(0.2 * self.max_size // 4)):
             self.population.extend([Chromosome("EDD"), Chromosome("FCFS"), Chromosome("SPT"), Chromosome("LPT")])
-        # Thêm 6 NST tạo ngẫu nhiên
-        for _ in range(self.max_size - self.population_size):
+        # Thêm phần còn lại
+        while self.max_size > self.population_size:
             self.population.append(Chromosome())
         
         return self.population
