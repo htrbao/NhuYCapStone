@@ -110,6 +110,7 @@ class Chromosome():
         self.data = data
         if self.type == "Genetic" or self.type == "Random":
             self.data:pd.DataFrame = data.sort_values(by=['Gene Order'])
+
         self.encode_chrom()
 
 
