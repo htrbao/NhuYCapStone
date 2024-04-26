@@ -3,7 +3,7 @@ import random
 import heapq
 import pandas as pd
 import numpy as np
-from typing_extensions import Self
+# from typing_extensions import Self
 
 from .chrom import Chromosome
 
@@ -29,7 +29,7 @@ class Population():
         return self.population
     
 
-    def acceptance_threshold_replacement(self, offspring: Self):
+    def acceptance_threshold_replacement(self, offspring):
         # Số lượng NST trong quần thể
         P = len(self.population)
         #Ngưỡng chấp nhận là NST thứ K

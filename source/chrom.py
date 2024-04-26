@@ -3,7 +3,6 @@ import heapq
 import random
 import pandas as pd
 import numpy as np
-from typing_extensions import Self
 from copy import deepcopy
 
 
@@ -28,6 +27,26 @@ def POX(gene1: list[int], gene2: list[int], keep_number: int = 2):
 
     return child
 
+
+def PMX(gene1: list[int], gene2: list[int]):
+    px1, px2 = np.random.randint(0, len(gene1) // 2, (2, ))
+    px1, px2 = (px2, px1) if px1 > px2 else (px1, px2)
+    mask = [False] * px1 + [True] * (px2 - px1) + [False] * (len(gene1) - px2)
+    child1 = np.where(mask, gene2, gene1)
+    child2 = np.where(mask, gene1, gene2)
+    relationship_1, relationship_2 = {}, {}
+    for i in range(px1, px2 + 1):
+        relationship_1[child1[i]] = child2[i]
+        relationship_2[child2[i]] = child1[i]
+
+    for i in range(len(child1) // 2):
+        if px1 <= i and i <= px2:
+            continue
+        if child1[i] in relationship_1.keys():
+            child1[i] = relationship_1[child1[i]]
+        if child2[i] in relationship_2.keys():
+            child2[i] = relationship_2[child2[i]]
+    return child1, child2
 
 class Chromosome():
     chrom_types = {
@@ -121,14 +140,16 @@ class Chromosome():
         self.gene.extend(self.data.sort_values(by="Start time 2")["Jobs"].to_list())
 
     
-    def crossover(self, another:Self) -> tuple[Self, Self]:
-        crossover_point = random.randint(0, len(another) // 2)
-
+    def crossover(self, another, type: str = "PMX"):
         child1 = Chromosome("Genetic")
         child2 = Chromosome("Genetic")
 
-        child1.gene = POX(self.gene, another.gene)
-        child2.gene = POX(another.gene, self.gene)
+        if type == "POX":
+            crossover_point = random.randint(0, len(another) // 2)
+            child1.gene = POX(self.gene, another.gene)
+            child2.gene = POX(another.gene, self.gene)
+        elif type == "PMX":
+            child1.gene, child2.gene = PMX(self.gene, another.gene)
 
         child1.create_chrom()
         child2.create_chrom()
